@@ -6,3 +6,4 @@ node_modules/
 public/
 .deploy*/
 _multiconfig.ymlthemes/aic-themes/source/css/endspace.css
+themes/aic-themes/source/css/tailwind.css
