@@ -16,7 +16,7 @@ menu:
 
 endspace:
   loading_cover: true
-  loading_site_name: CLOUD09_SPACE
+  loading_site_name: 柚木鉉の空間
   loading_text_init: INITIALIZING
   loading_text_loading: LOADING
   loading_text_complete: READY
@@ -24,8 +24,8 @@ endspace:
   loading_text_fadeout: WELCOME
   loading_image: /svg/cloud.svg
 
-  banner_watermark_text: CLOUD09_SPACE
-  article_watermark_text: CLOUD09
+  banner_watermark_text: YUZUKITSURU_SPACE
+  article_watermark_text: 柚木鉉
 
   menu_category: true
   menu_tag: true

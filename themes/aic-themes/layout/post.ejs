@@ -1,16 +1,8 @@
-<%
-  const endspace = theme.endspace || {};
-  const watermark = endspace.article_watermark_text || 'CLOUD09';
-%>
 <div class="relative">
   <%- partial('_partial/post-meta', { post: page }) %>
 
-  <div id="article-wrapper" class="endspace-frame p-8 md:p-12 mb-12">
-    <div class="absolute top-4 right-4 text-[var(--endspace-text-muted)] opacity-10 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black pointer-events-none select-none z-0">
-      <%= watermark %>
-    </div>
-
-    <div id="notion-article" class="relative z-10">
+  <div id="article-wrapper" class="relative mb-12">
+    <div id="notion-article">
       <%- page.content %>
     </div>
   </div>

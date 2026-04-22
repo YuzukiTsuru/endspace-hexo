@@ -5,6 +5,9 @@
   var doc = document;
   var root = doc.documentElement;
 
+  // Shared state for swup hooks
+  var headings, tocLinks, lastActive, lastPct, pctEl;
+
   function applyTheme(mode) {
     root.classList.toggle('dark', mode === 'dark');
   }
@@ -112,6 +115,7 @@
       clearTimeout(maxWait);
       cancelAnimationFrame(rafId);
       setPhase('complete');
+      try { sessionStorage.setItem('aic-loaded', '1'); } catch (e) {}
       setTimeout(function () {
         setPhase('sweeping');
         setTimeout(function () {
@@ -143,7 +147,6 @@
     var navItems = nav.querySelectorAll('[data-nav]');
     var labels = nav.querySelectorAll('.sidenav-label');
     var author = nav.querySelector('.sidenav-author');
-    var collapsed = nav.querySelector('.sidenav-collapsed-contact');
     var expanded = nav.querySelector('.sidenav-expanded-contact');
     var triangle = nav.querySelector('.sidenav-triangle');
 
@@ -160,11 +163,6 @@
         author.classList.toggle('max-h-20', on);
         author.classList.toggle('opacity-0', !on);
         author.classList.toggle('max-h-0', !on);
-      }
-      if (collapsed) {
-        collapsed.classList.toggle('opacity-0', on);
-        collapsed.classList.toggle('h-0', on);
-        collapsed.classList.toggle('overflow-hidden', on);
       }
       if (expanded) {
         expanded.classList.toggle('opacity-100', on);
@@ -247,7 +245,7 @@
     var drawer = doc.getElementById('fc-drawer');
     if (!capsule) return;
 
-    var pctEl = capsule.querySelector('.fc-percent');
+    pctEl = capsule.querySelector('.fc-percent');
     var tocBtn = capsule.querySelector('[data-fc-action="toc"]');
 
     function setOpen(on, tab) {
@@ -264,9 +262,6 @@
       if (action === 'toc') {
         var open = !drawer.classList.contains('open') || drawer.dataset.tab !== 'toc';
         setOpen(open, 'toc');
-      } else if (action === 'comments') {
-        var c = doc.getElementById('comments');
-        if (c) c.scrollIntoView({ behavior: 'smooth' });
       } else if (action === 'top') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (action === 'theme') {
@@ -279,14 +274,22 @@
       if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); });
     }
 
-    var headings = doc.querySelectorAll('#notion-article [data-id]');
-    var tocLinks = doc.querySelectorAll('.fc-toc-item');
-    var lastActive = null;
-    var lastPct = -1;
+    headings = doc.querySelectorAll('#notion-article [data-id]');
+    tocLinks = doc.querySelectorAll('.fc-toc-item');
+    lastActive = null;
+    lastPct = -1;
 
     function onScroll() {
-      var scrollTop = window.scrollY;
-      var docH = doc.documentElement.scrollHeight - window.innerHeight;
+      // Re-query pctEl if lost (e.g., after swup transition)
+      if (!pctEl) pctEl = capsule.querySelector('.fc-percent');
+
+      var scrollTop = window.scrollY || window.pageYOffset || doc.documentElement.scrollTop || 0;
+      var scrollHeight = Math.max(
+        doc.body.scrollHeight || 0,
+        doc.documentElement.scrollHeight || 0
+      );
+      var clientHeight = window.innerHeight || doc.documentElement.clientHeight || 0;
+      var docH = scrollHeight - clientHeight;
       var p = docH > 0 ? Math.min((scrollTop / docH) * 100, 100) : 0;
       var rounded = Math.round(p);
       if (rounded !== lastPct) {
@@ -316,13 +319,28 @@
         });
       }
     }
+
+    // Expose onScroll for swup hooks
+    window.__aicOnScroll = onScroll;
+
     var lastCall = 0;
+    var scrollTimer = null;
     window.addEventListener('scroll', function () {
       var now = Date.now();
       if (now - lastCall < 80) return;
       lastCall = now;
       onScroll();
+
+      // Ensure final update after scroll stops
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(onScroll, 150);
     }, { passive: true });
+
+    // Ensure calculation after page fully loaded
+    window.addEventListener('load', function () {
+      setTimeout(onScroll, 100);
+    });
+
     onScroll();
   })();
 
@@ -347,5 +365,93 @@
         for (var i = 0; i < node.childNodes.length; i++) walk(node.childNodes[i], term);
       }
     }
+  })();
+
+  // Swup PJAX for smooth page transitions
+  (function initSwup() {
+    if (typeof window.Swup === 'undefined') return;
+
+    var swup = new Swup({
+      containers: ['#swup-main'],
+      animateHistoryBrowsing: true,
+      animationSelector: '[class*="transition-"]',
+      cache: true
+    });
+
+    swup.hooks.on('page:view', function () {
+      // Update sidenav active state
+      var navItems = doc.querySelectorAll('#sidenav [data-nav]');
+      var active = detectActiveNav(navItems);
+      navItems.forEach(function (el) { el.classList.toggle('active', el === active); });
+
+      // Position indicator
+      var indicator = doc.getElementById('sidenav-indicator');
+      var container = doc.querySelector('#sidenav-items');
+      if (active && indicator && container) {
+        var navRect = container.getBoundingClientRect();
+        var itemRect = active.getBoundingClientRect();
+        if (itemRect.height > 0) {
+          indicator.style.top = (itemRect.top - navRect.top) + 'px';
+          indicator.style.opacity = '1';
+        }
+      }
+
+      // Update mobilenav active state
+      var mobileItems = doc.querySelectorAll('#mobilenav-panel .mobilenav-item');
+      var mobileActive = detectActiveNav(mobileItems);
+      mobileItems.forEach(function (el) {
+        var on = el === mobileActive;
+        el.classList.toggle('text-black', on);
+        el.classList.toggle('dark:text-white', on);
+        el.classList.toggle('font-bold', on);
+      });
+
+      // Scroll to top
+      window.scrollTo(0, 0);
+
+      // Update TOC from hidden JSON data
+      var tocDataEl = doc.getElementById('aic-toc-data');
+      var tocNav = doc.getElementById('fc-toc');
+      var tocBtn = doc.querySelector('[data-fc-action="toc"]');
+      var drawer = doc.getElementById('fc-drawer');
+
+      if (tocDataEl && tocNav) {
+        try {
+          var tocList = JSON.parse(tocDataEl.textContent || '[]');
+          // Clear existing TOC
+          tocNav.innerHTML = '';
+          if (tocList.length) {
+            tocList.forEach(function(t) {
+              var a = doc.createElement('a');
+              a.href = '#' + t.id;
+              a.className = 'fc-toc-item';
+              a.setAttribute('data-toc-id', t.id);
+              a.style.paddingLeft = ((t.indentLevel || 0) * 12 + 8) + 'px';
+              a.textContent = t.text;
+              tocNav.appendChild(a);
+            });
+            if (tocBtn) tocBtn.style.display = '';
+          } else {
+            tocNav.innerHTML = '<div class="text-xs text-gray-400 italic">No headings</div>';
+            if (tocBtn) tocBtn.style.display = 'none';
+            if (drawer) drawer.classList.remove('open');
+          }
+        } catch (e) {}
+      }
+
+      // Update floating controls scrollspy
+      if (tocBtn && tocBtn.style.display !== 'none') {
+        pctEl = doc.querySelector('.fc-percent');
+      }
+      headings = doc.querySelectorAll('#notion-article [data-id]');
+      tocLinks = doc.querySelectorAll('.fc-toc-item');
+      lastActive = null;
+      lastPct = -1;
+      if (window.__aicOnScroll) window.__aicOnScroll();
+
+      // Update page title from new document
+      var newTitle = doc.querySelector('title');
+      if (newTitle) doc.title = newTitle.textContent;
+    });
   })();
 })();

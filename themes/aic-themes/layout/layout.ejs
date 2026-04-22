@@ -12,14 +12,14 @@
   <%- partial('_partial/sidenav') %>
   <%- partial('_partial/mobilenav') %>
 
-  <div class="md:ml-[5rem] flex flex-col min-h-screen">
+  <div id="swup-main" class="md:ml-[5rem] flex flex-col min-h-screen transition-fade">
     <% if (!page.fullWidth) { %>
       <%- partial('_partial/titlebar', { post: page.layout === 'post' ? page : null }) %>
     <% } %>
 
     <main id="container-inner"
           class="w-full relative z-10 flex-grow mx-auto py-8 px-4 md:px-8 lg:px-12 max-w-screen-xl xl:max-w-screen-2xl <%= page.fullWidth ? '' : 'max-w-4xl' %>">
-      <div class="fade-enter ready">
+      <div id="swup-content" class="fade-enter ready">
         <%- body %>
       </div>
     </main>
@@ -28,9 +28,13 @@
       <%- partial('_partial/footer') %>
     <% } %>
 
-    <%- partial('_partial/floating-controls', { aicToc: Array.isArray(page.__toc) ? page.__toc : [] }) %>
+    <!-- Hidden TOC data for swup to read -->
+    <script type="application/json" id="aic-toc-data"><%= JSON.stringify(Array.isArray(page.__toc) ? page.__toc : []) %></script>
   </div>
 
+  <%- partial('_partial/floating-controls', { aicToc: Array.isArray(page.__toc) ? page.__toc : [] }) %>
+
+  <script src="<%- url_for('/js/swup.min.js') %>" defer></script>
   <script src="<%- url_for('/js/theme.js') %>" defer></script>
   <% if (page.__search_page) { %>
     <script src="<%- url_for('/js/search.js') %>" defer></script>

@@ -3,6 +3,7 @@
   const marquee = endspace.banner_watermark_text || 'CLOUD09_SPACE';
   const cover = (post && (post.cover || (typeof postCover === 'function' ? postCover(post) : ''))) || '';
 %>
+<% if (!post || cover) { %>
 <div class="relative py-20 md:py-28 border-b-2 border-[var(--endspace-border-base)] overflow-hidden bg-[var(--endspace-bg-base)]">
   <% if (post && cover) { %>
     <div class="absolute inset-0">
@@ -31,8 +32,9 @@
   <% } %>
 
   <% if (post && post.title) { %>
-    <div class="relative z-10 max-w-4xl mx-auto px-6 text-white">
-      <h1 class="text-3xl md:text-5xl font-black leading-tight drop-shadow-lg"><%= post.title %></h1>
+    <div class="relative z-10 max-w-4xl mx-auto px-6 <%= cover ? 'text-white' : 'text-[var(--endspace-text-primary)]' %>">
+      <h1 class="text-3xl md:text-5xl font-black leading-tight <%= cover ? 'drop-shadow-lg' : '' %>"><%= post.title %></h1>
     </div>
   <% } %>
 </div>
+<% } %>
