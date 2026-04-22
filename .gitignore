@@ -6,5 +6,5 @@ node_modules/
 public/
 .deploy*/
 _multiconfig.yml
-themes/aic-themes/source/css/endspace.css
-themes/aic-themes/source/css/tailwind.css
+themes/endspace/source/css/endspace.css
+themes/endspace/source/css/tailwind.css

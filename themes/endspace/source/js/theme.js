@@ -1,4 +1,4 @@
-/* aic-themes (Endspace) — runtime behavior */
+/* Endspace — runtime behavior */
 (function () {
   'use strict';
 

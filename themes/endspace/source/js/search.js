@@ -1,4 +1,4 @@
-/* aic-themes — search page client (uses hexo-generator-search XML) */
+/* Endspace — search page client (uses hexo-generator-search XML) */
 (function () {
   'use strict';
 
