@@ -18,36 +18,19 @@
 <link rel="alternate" type="application/atom+xml" title="<%= config.title %>" href="<%- url_for('/atom.xml') %>">
 <% } %>
 
-<!-- Fonts & Icon CDN -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="<%= theme.cdn && theme.cdn.inter_font %>">
-<link rel="stylesheet" href="<%= theme.cdn && theme.cdn.remixicon %>">
-<link rel="stylesheet" href="<%= theme.cdn && theme.cdn.fontawesome %>">
+<!-- Fonts (local) -->
+<link rel="stylesheet" href="<%- url_for('/css/vendor/inter.css') %>">
+<link rel="stylesheet" href="<%- url_for('/css/vendor/jetbrains-mono.css') %>">
 
-<!-- Tailwind Play CDN (runtime JIT) -->
-<script src="<%= theme.cdn && theme.cdn.tailwind %>"></script>
-<script>
-  // Tailwind runtime config (align arbitrary colors used in markup).
-  window.tailwind = window.tailwind || {};
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          endspace: {
-            base: 'var(--endspace-bg-base)',
-            primary: 'var(--endspace-bg-primary)',
-            secondary: 'var(--endspace-bg-secondary)',
-            yellow: '#FBFB45'
-          }
-        }
-      }
-    }
-  };
-</script>
+<!-- Icons (local) -->
+<link rel="stylesheet" href="<%- url_for('/css/vendor/remixicon.css') %>">
+<link rel="stylesheet" href="<%- url_for('/css/vendor/fontawesome.min.css') %>">
 
+<!-- Tailwind CSS (precompiled) -->
+<link rel="stylesheet" href="<%- url_for('/css/tailwind.css') %>">
+
+<!-- Theme CSS -->
 <link rel="stylesheet" href="<%- url_for('/css/endspace.css') %>">
 
-<!-- Search index location (consumed by search.js) -->
+<!-- Search index location -->
 <meta name="aic-search-path" content="<%- url_for('/search.xml') %>">
