@@ -1,0 +1,53 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title><%= page.title ? (page.title + ' · ' + config.title) : config.title %></title>
+<meta name="description" content="<%= page.description || page.excerpt || config.description || '' %>">
+<meta name="keywords" content="<%= (page.keywords || config.keywords || '') %>">
+<meta name="generator" content="Hexo + aic-themes">
+<% if (config.url) { %>
+<meta property="og:title" content="<%= page.title || config.title %>">
+<meta property="og:description" content="<%= page.description || page.excerpt || config.description || '' %>">
+<meta property="og:type" content="<%= page.layout === 'post' ? 'article' : 'website' %>">
+<meta property="og:url" content="<%- url_for(page.path) %>">
+<% if (page.cover) { %><meta property="og:image" content="<%= page.cover %>"><% } %>
+<% } %>
+
+<link rel="icon" type="image/x-icon" href="<%- url_for(theme.favicon || '/favicon.ico') %>">
+<% if (config.feed) { %>
+<link rel="alternate" type="application/atom+xml" title="<%= config.title %>" href="<%- url_for('/atom.xml') %>">
+<% } %>
+
+<!-- Fonts & Icon CDN -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="<%= theme.cdn && theme.cdn.inter_font %>">
+<link rel="stylesheet" href="<%= theme.cdn && theme.cdn.remixicon %>">
+<link rel="stylesheet" href="<%= theme.cdn && theme.cdn.fontawesome %>">
+
+<!-- Tailwind Play CDN (runtime JIT) -->
+<script src="<%= theme.cdn && theme.cdn.tailwind %>"></script>
+<script>
+  // Tailwind runtime config (align arbitrary colors used in markup).
+  window.tailwind = window.tailwind || {};
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          endspace: {
+            base: 'var(--endspace-bg-base)',
+            primary: 'var(--endspace-bg-primary)',
+            secondary: 'var(--endspace-bg-secondary)',
+            yellow: '#FBFB45'
+          }
+        }
+      }
+    }
+  };
+</script>
+
+<link rel="stylesheet" href="<%- url_for('/css/endspace.css') %>">
+
+<!-- Search index location (consumed by search.js) -->
+<meta name="aic-search-path" content="<%- url_for('/search.xml') %>">

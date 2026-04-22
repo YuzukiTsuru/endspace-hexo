@@ -1,0 +1,10 @@
+{
+  "name": "hexo-theme-aic-themes",
+  "version": "1.0.0",
+  "description": "Endspace / Endfield-inspired light-industrial theme for Hexo (ported from NotionNext Endspace).",
+  "main": "scripts/helpers.js",
+  "engines": {
+    "hexo": ">= 6.0.0"
+  },
+  "license": "MIT"
+}

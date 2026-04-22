@@ -1,0 +1,45 @@
+<%
+  const footer = theme.footer || {};
+  const y = new Date().getFullYear();
+  const since = footer.since;
+%>
+<footer class="relative mt-20 bg-[#252726] text-gray-300 overflow-hidden">
+  <div class="spectrum-bar opacity-30"></div>
+
+  <div class="py-6 md:py-8 space-y-3 md:space-y-4 px-4">
+    <div class="flex justify-center items-center gap-4 md:gap-6 text-sm font-mono md:-ml-10">
+      <% if (footer.enable_rss && config.feed) { %>
+        <a href="<%- url_for('/atom.xml') %>" target="_blank" rel="noreferrer"
+           class="flex items-center gap-2 text-gray-400 hover:text-gray-200 hover:underline transition-colors py-2">
+          <i class="fas fa-rss"></i><span>RSS</span>
+        </a>
+      <% } %>
+      <a href="<%- url_for('/sitemap.xml') %>" target="_blank" rel="noreferrer"
+         class="flex items-center gap-2 text-gray-400 hover:text-gray-200 hover:underline transition-colors py-2">
+        <i class="fas fa-sitemap"></i><span>SITEMAP</span>
+      </a>
+    </div>
+
+    <% if (footer.bei_an) { %>
+      <div class="flex justify-center items-center text-sm font-mono text-gray-500 md:-ml-10">
+        <% if (footer.bei_an_link) { %>
+          <a href="<%= footer.bei_an_link %>" target="_blank" rel="noreferrer"
+             class="hover:text-gray-300 hover:underline transition-colors py-1">
+            <%= footer.bei_an %>
+          </a>
+        <% } else { %>
+          <span><%= footer.bei_an %></span>
+        <% } %>
+      </div>
+    <% } %>
+
+    <div class="flex justify-center items-center text-xs font-mono text-gray-500 md:-ml-10">
+      <div class="text-center">
+        © <%= since && since !== y ? (since + '-' + y) : y %> <%= config.author || '' %>
+        <span class="hidden sm:inline">. All Rights Reserved.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-0 right-0 w-12 h-12 md:w-16 md:h-16 border-b-4 border-r-4 border-gray-800 opacity-50 hidden md:block"></div>
+</footer>
