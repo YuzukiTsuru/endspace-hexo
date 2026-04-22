@@ -1,0 +1,60 @@
+// =============================================================
+
+// Marquee watermark
+@keyframes bgMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.bg-watermark-scroll {
+  display: inline-block;
+  animation: bgMarquee 30s linear infinite;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+// Fade-in on mount
+.fade-enter {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+
+  &.ready {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Line clamps (Tailwind's are available via CDN but we also ship native
+// fallbacks for older CDNs or if Tailwind is offline)
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+// Swup page transitions
+.transition-fade {
+  opacity: 1;
+  transition: opacity 0.15s ease-out;
+}
+
+html.is-changing .transition-fade {
+  opacity: 0;
+}
+
+html.is-rendering .transition-fade {
+  opacity: 0;
+}
+
+html.is-popstate .transition-fade {
+  transition: none;
+}
