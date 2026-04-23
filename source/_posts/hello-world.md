@@ -1,38 +1,44 @@
 ---
-title: Hello World
+title: 你好，世界 — 博客上线手记
+date: 2024-11-01
+categories:
+  - 随笔
+tags:
+  - 随笔
+  - 博客
+cover: https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&h=630&fit=crop
+excerpt: 每一个博客的开始，都是一句「Hello World」。记录这个站点从零到上线的点滴。
 ---
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
 
-## Quick Start
+## Hello World
 
-### Create a new post
+每一个程序员的第一行代码，几乎都是 `Hello World`。而每一个博客的第一篇文章，也理应从这句话开始。
 
-``` bash
-$ hexo new "My New Post"
+```c
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
 ```
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+这个站点使用 [Hexo](https://hexo.io/) 搭建，搭配自制的 Endspace 主题——一款受《明日方舟：终末地》官网风格启发的工业美学主题。
 
-### Run server
+## 为什么写博客
 
-``` bash
-$ hexo server
-```
+写博客的理由有很多，但归根结底无非是：
 
-More info: [Server](https://hexo.io/docs/server.html)
+- **记录**：把学过的东西写下来，比单纯看过要深刻得多
+- **分享**：如果一篇文章能帮到哪怕一个人，那它就有了价值
+- **沉淀**：博客是时间胶囊，未来的自己回看时会感谢今天的记录
 
-### Generate static files
+> 写作是思考的延伸。当你能把一件事写清楚，说明你真正理解了它。
 
-``` bash
-$ hexo generate
-```
+## 这个博客会写什么
 
-More info: [Generating](https://hexo.io/docs/generating.html)
+这个空间会记录关于开发、设计和技术的思考。可能是教程，可能是踩坑记录，也可能只是某个深夜的碎碎念。
 
-### Deploy to remote sites
+希望你能在这里找到有用的东西。
 
-``` bash
-$ hexo deploy
-```
-
-More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
+Welcome to my space.
