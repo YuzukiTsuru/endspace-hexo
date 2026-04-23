@@ -2,22 +2,38 @@
 (function () {
   'use strict';
 
-  var meta = document.querySelector('meta[name="aic-search-path"]');
-  var searchPath = (meta && meta.content) || '/search.xml';
-
-  var input = document.getElementById('search-input');
-  var clear = document.getElementById('search-clear');
-  var form = document.getElementById('search-form');
-  var wrapper = document.getElementById('posts-wrapper');
-  var emptyEl = document.getElementById('search-empty');
-  if (!input || !wrapper) return;
-
   var index = null;
   var pending = null;
+
+  function text(node, sel) {
+    var el = node.querySelector(sel);
+    return el ? el.textContent : '';
+  }
+  function tags(node, parent, child) {
+    var p = node.querySelector(parent);
+    if (!p) return [];
+    return Array.prototype.map.call(p.querySelectorAll(child), function (n) { return n.textContent; });
+  }
+  function stripTags(s) { return String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  function highlight(text, term) {
+    if (!term) return escapeHtml(text);
+    var escaped = escapeHtml(text);
+    var re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    return escaped.replace(re, '<span class="search-hit">$1</span>');
+  }
 
   function loadIndex() {
     if (index) return Promise.resolve(index);
     if (pending) return pending;
+    var meta = document.querySelector('meta[name="aic-search-path"]');
+    var searchPath = (meta && meta.content) || '/search.xml';
     pending = fetch(searchPath, { credentials: 'same-origin' })
       .then(function (r) { return r.text(); })
       .then(function (xml) {
@@ -44,31 +60,8 @@
       });
     return pending;
   }
-  function text(node, sel) {
-    var el = node.querySelector(sel);
-    return el ? el.textContent : '';
-  }
-  function tags(node, parent, child) {
-    var p = node.querySelector(parent);
-    if (!p) return [];
-    return Array.prototype.map.call(p.querySelectorAll(child), function (n) { return n.textContent; });
-  }
-  function stripTags(s) { return String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
 
-  function escapeHtml(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
-    });
-  }
-
-  function highlight(text, term) {
-    if (!term) return escapeHtml(text);
-    var escaped = escapeHtml(text);
-    var re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-    return escaped.replace(re, '<span class="search-hit">$1</span>');
-  }
-
-  function render(items, term) {
+  function render(wrapper, emptyEl, items, term) {
     if (!items.length) {
       wrapper.innerHTML = '';
       emptyEl && emptyEl.classList.remove('hidden');
@@ -115,7 +108,7 @@
     wrapper.innerHTML = html;
   }
 
-  function search(term) {
+  function doSearch(wrapper, emptyEl, term) {
     term = (term || '').trim();
     var url = new URL(location.href);
     if (term) url.searchParams.set('keyword', term); else url.searchParams.delete('keyword');
@@ -124,22 +117,37 @@
     loadIndex().then(function (idx) {
       var lc = term.toLowerCase();
       var matches = idx.filter(function (p) { return p._lc.indexOf(lc) >= 0; });
-      render(matches, term);
+      render(wrapper, emptyEl, matches, term);
     });
   }
 
-  // Initial query from ?keyword=
-  var initial = new URLSearchParams(location.search).get('keyword') || '';
-  if (initial) { input.value = initial; clear && clear.classList.remove('hidden'); search(initial); }
+  function initSearch() {
+    var input = document.getElementById('search-input');
+    var clear = document.getElementById('search-clear');
+    var form = document.getElementById('search-form');
+    var wrapper = document.getElementById('posts-wrapper');
+    var emptyEl = document.getElementById('search-empty');
+    if (!input || !wrapper) return;
 
-  var debounceId = 0;
-  input.addEventListener('input', function () {
-    clear && clear.classList.toggle('hidden', !input.value);
-    clearTimeout(debounceId);
-    debounceId = setTimeout(function () { search(input.value); }, 200);
-  });
-  if (clear) clear.addEventListener('click', function () {
-    input.value = ''; clear.classList.add('hidden'); search('');
-  });
-  if (form) form.addEventListener('submit', function (e) { e.preventDefault(); search(input.value); });
+    // Initial query from ?keyword=
+    var initial = new URLSearchParams(location.search).get('keyword') || '';
+    if (initial) { input.value = initial; clear && clear.classList.remove('hidden'); doSearch(wrapper, emptyEl, initial); }
+
+    var debounceId = 0;
+    input.addEventListener('input', function () {
+      clear && clear.classList.toggle('hidden', !input.value);
+      clearTimeout(debounceId);
+      debounceId = setTimeout(function () { doSearch(wrapper, emptyEl, input.value); }, 200);
+    });
+    if (clear) clear.addEventListener('click', function () {
+      input.value = ''; clear.classList.add('hidden'); doSearch(wrapper, emptyEl, '');
+    });
+    if (form) form.addEventListener('submit', function (e) { e.preventDefault(); doSearch(wrapper, emptyEl, input.value); });
+  }
+
+  // Expose for swup page:view hook
+  window.__aicInitSearch = initSearch;
+
+  // Auto-init on direct page load
+  initSearch();
 })();

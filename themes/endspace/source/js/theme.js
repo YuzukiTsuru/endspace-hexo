@@ -461,6 +461,9 @@
       // Update page title from new document
       var newTitle = doc.querySelector('title');
       if (newTitle) doc.title = newTitle.textContent;
+
+      // Re-init search on search page
+      if (window.__aicInitSearch) window.__aicInitSearch();
     });
   })();
 })();
