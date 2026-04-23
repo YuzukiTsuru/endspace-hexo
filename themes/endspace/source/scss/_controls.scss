@@ -14,7 +14,7 @@
   transform: translateY(100%);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0s 0.4s;
   z-index: 40;
   max-height: 70vh;
   display: flex;
@@ -24,6 +24,7 @@
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0s 0s;
   }
 }
 
@@ -58,7 +59,7 @@
   border-bottom: 1px solid var(--endspace-border-base);
   font-weight: 700;
   text-transform: uppercase;
-  color: #000;
+  color: var(--endspace-text-primary);
   font-size: 0.85rem;
   gap: 0.5rem;
 }
@@ -110,6 +111,28 @@
   &:active {
     transform: scale(0.95);
   }
+
+  &[data-fc-action="toc"] {
+    opacity: 0;
+
+    &:not([style*="display: none"]):not([style*="display:none"]) {
+      animation: fc-btn-fade-in 0.3s ease forwards;
+    }
+
+    &.fc-btn-exit {
+      animation: fc-btn-fade-out 0.3s ease forwards;
+    }
+  }
+}
+
+@keyframes fc-btn-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fc-btn-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .fc-btn-inner {
@@ -159,19 +182,31 @@
   padding: 0.35rem 0.5rem;
   margin: 0 -0.5rem;
   font-size: 0.8rem;
-  color: #52525b;
+  color: var(--endspace-text-secondary);
   border-radius: 4px;
   transition: all 0.15s ease;
   text-decoration: none;
 
   &:hover {
     color: #000;
-    background: #fff;
+    background: var(--endspace-accent-yellow);
+  }
+
+  &.active {
+    color: #fff;
+    font-weight: 700;
+    background: #000;
+  }
+}
+
+.dark .fc-toc-item {
+  &:hover {
+    color: #000;
+    background: var(--endspace-accent-yellow);
   }
 
   &.active {
     color: #000;
-    font-weight: 700;
-    background: rgba(251, 251, 70, 0.1);
+    background: #fff;
   }
 }

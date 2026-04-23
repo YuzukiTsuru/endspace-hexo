@@ -431,10 +431,18 @@
               a.textContent = t.text;
               tocNav.appendChild(a);
             });
-            if (tocBtn) tocBtn.style.display = '';
+            if (tocBtn) {
+                tocBtn.style.display = '';
+                tocBtn.style.animation = 'none';
+                tocBtn.offsetHeight;
+                tocBtn.style.animation = '';
+              }
           } else {
             tocNav.innerHTML = '<div class="text-xs text-gray-400 italic">No headings</div>';
-            if (tocBtn) tocBtn.style.display = 'none';
+            if (tocBtn) {
+              tocBtn.classList.add('fc-btn-exit');
+              setTimeout(function() { tocBtn.style.display = 'none'; tocBtn.classList.remove('fc-btn-exit'); }, 300);
+            }
             if (drawer) drawer.classList.remove('open');
           }
         } catch (e) {}
