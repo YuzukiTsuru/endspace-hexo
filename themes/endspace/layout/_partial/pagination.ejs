@@ -33,7 +33,7 @@
           const inner = 'w-full h-full rounded-full flex items-center justify-center bg-transparent transition-colors duration-200 '
             + (it.disabled ? 'text-white/50' : 'text-black group-hover:bg-[var(--endspace-accent-yellow)]');
         %>
-        <<%= tag %><%= it.disabled ? '' : ' href="' + it.href + '"' %> aria-label="<%= it.label %>" class="<%= outer %>">
+        <<%= tag %><% if (!it.disabled) { %> href="<%- it.href %>"<% } %> aria-label="<%= it.label %>" class="<%= outer %>">
           <div class="<%= inner %>">
             <%- icon(it.icon, { size: 16 }) %>
           </div>
