@@ -24,7 +24,11 @@
   background: #0f1419;
   z-index: 99999;
   overflow: hidden;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.6s ease-out;
+
+  &.fadeout {
+    opacity: 0;
+  }
 
   &.hidden {
     opacity: 0;

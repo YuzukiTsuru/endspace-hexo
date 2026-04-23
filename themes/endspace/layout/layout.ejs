@@ -29,7 +29,7 @@
     <% } %>
 
     <!-- Hidden TOC data for swup to read -->
-    <script type="application/json" id="aic-toc-data"><%= JSON.stringify(Array.isArray(page.__toc) ? page.__toc : []) %></script>
+    <template id="aic-toc-data"><%= JSON.stringify(Array.isArray(page.__toc) ? page.__toc : []) %></template>
   </div>
 
   <%- partial('_partial/floating-controls', { aicToc: Array.isArray(page.__toc) ? page.__toc : [] }) %>

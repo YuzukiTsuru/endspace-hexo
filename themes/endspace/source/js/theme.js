@@ -417,7 +417,8 @@
 
       if (tocDataEl && tocNav) {
         try {
-          var tocList = JSON.parse(tocDataEl.textContent || '[]');
+          var raw = tocDataEl.content ? tocDataEl.content.textContent : tocDataEl.textContent;
+          var tocList = JSON.parse(raw || '[]');
           // Clear existing TOC
           tocNav.innerHTML = '';
           if (tocList.length) {

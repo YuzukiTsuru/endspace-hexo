@@ -30,14 +30,12 @@
 </div>
 
 <div class="fc-capsule pointer-events-auto">
-  <% if (tocList && tocList.length) { %>
-    <button type="button" class="fc-btn" data-fc-action="toc" title="Table of Contents">
+    <button type="button" class="fc-btn" data-fc-action="toc" title="Table of Contents" style="<%= tocList && tocList.length ? '' : 'display:none' %>">
       <div class="fc-btn-inner">
         <span class="fc-percent">0%</span>
         <span class="fc-icon-hover"><%- icon('list_tree', { size: 20 }) %></span>
       </div>
     </button>
-  <% } %>
   <button type="button" class="fc-btn" data-fc-action="top" title="Scroll To Top">
     <div class="fc-btn-inner"><%- icon('arrow_up', { size: 20 }) %></div>
   </button>
