@@ -371,11 +371,28 @@
   (function initSwup() {
     if (typeof window.Swup === 'undefined') return;
 
+    // Loading spinner — placed outside swup container so it survives content replacement
+    var spinner = doc.createElement('div');
+    spinner.className = 'swup-spinner';
+    spinner.innerHTML = '<div class="swup-spinner-ring"></div>';
+    spinner.style.display = 'none';
+    var swupMain = doc.getElementById('swup-main');
+    if (swupMain && swupMain.parentNode) swupMain.parentNode.insertBefore(spinner, swupMain.nextSibling);
+
     var swup = new Swup({
       containers: ['#swup-main'],
       animateHistoryBrowsing: true,
       animationSelector: '[class*="transition-"]',
       cache: true
+    });
+
+    swup.hooks.on('animation:out:start', function () {
+      spinner.style.display = '';
+      spinner.style.opacity = '1';
+    });
+    swup.hooks.on('page:view', function () {
+      spinner.style.opacity = '0';
+      setTimeout(function () { spinner.style.display = 'none'; }, 300);
     });
 
     swup.hooks.on('page:view', function () {
