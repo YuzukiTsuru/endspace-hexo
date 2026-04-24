@@ -390,7 +390,7 @@
       spinner.style.display = '';
       spinner.style.opacity = '1';
     });
-    swup.hooks.on('page:view', function () {
+    swup.hooks.on('animation:in:end', function () {
       spinner.style.opacity = '0';
       setTimeout(function () { spinner.style.display = 'none'; }, 300);
     });
