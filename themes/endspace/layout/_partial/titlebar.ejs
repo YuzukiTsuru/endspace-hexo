@@ -31,9 +31,9 @@
     </div>
   <% } %>
 
-  <% if (post && post.title) { %>
-    <div class="relative z-10 max-w-4xl mx-auto px-6 <%= cover ? 'text-white' : 'text-[var(--endspace-text-primary)]' %>">
-      <h1 class="text-3xl md:text-5xl font-black leading-tight <%= cover ? 'drop-shadow-lg' : '' %>"><%= post.title %></h1>
+  <% if (post && post.title && !cover) { %>
+    <div class="relative z-10 max-w-4xl mx-auto px-6 text-[var(--endspace-text-primary)]">
+      <h1 class="text-3xl md:text-5xl font-black leading-tight"><%= post.title %></h1>
     </div>
   <% } %>
 </div>
