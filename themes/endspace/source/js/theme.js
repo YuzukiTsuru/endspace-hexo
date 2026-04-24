@@ -302,9 +302,8 @@
       var prevBox = null;
       for (var i = 0; i < headings.length; i++) {
         var h = headings[i];
-        if (!current) current = h.getAttribute('data-id');
         var box = h.getBoundingClientRect();
-        var off = Math.max(150, prevBox ? (box.top - prevBox.bottom) / 4 : 0);
+        var off = Math.max(100, prevBox ? (box.top - prevBox.bottom) / 4 : 0);
         if (box.top - off < 0) {
           current = h.getAttribute('data-id');
           prevBox = box;
@@ -312,6 +311,7 @@
         }
         break;
       }
+      if (!current && headings.length) current = headings[0].getAttribute('data-id');
       if (current !== lastActive) {
         lastActive = current;
         tocLinks.forEach(function (l) {
